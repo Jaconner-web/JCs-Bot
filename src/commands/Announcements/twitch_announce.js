@@ -42,19 +42,19 @@ module.exports = {
         const pingEveryone = interaction.options.getBoolean('ping_everyone');
         const announceChannel = interaction.options.getChannel('channel');
 
-        // Clean username
         const twitchName = twitchInput
             .replace("https://www.twitch.tv/", "")
             .replace("https://twitch.tv/", "")
             .trim();
 
         await db.query(`
-            INSERT INTO twitch_settings (guild_id, twitch_name, message, ping_everyone, channel_id)
-            VALUES ($1, $2, $3, $4, $5)
-            ON CONFLICT (guild_id)
-            DO UPDATE SET twitch_name = $2, message = $3, ping_everyone = $4, channel_id = $5
+            DELETE FROM twitch_settings;
+        `);
+
+        await db.query(`
+            INSERT INTO twitch_settings (twitch_name, message, ping_everyone, channel_id)
+            VALUES ($1, $2, $3, $4)
         `, [
-            interaction.guild.id,
             twitchName,
             message,
             pingEveryone,
