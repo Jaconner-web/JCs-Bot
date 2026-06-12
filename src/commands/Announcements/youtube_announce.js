@@ -44,19 +44,19 @@ module.exports = {
 
         let channelId = input;
 
-        // Extract channel ID from link
         if (input.includes("youtube.com")) {
             const match = input.match(/channel\/([^\/]+)/);
             if (match) channelId = match[1];
         }
 
         await db.query(`
-            INSERT INTO youtube_settings (guild_id, channel_id, message, ping_everyone, announce_channel)
-            VALUES ($1, $2, $3, $4, $5)
-            ON CONFLICT (guild_id)
-            DO UPDATE SET channel_id = $2, message = $3, ping_everyone = $4, announce_channel = $5
+            DELETE FROM youtube_settings;
+        `);
+
+        await db.query(`
+            INSERT INTO youtube_settings (channel_id, message, ping_everyone, announce_channel)
+            VALUES ($1, $2, $3, $4)
         `, [
-            interaction.guild.id,
             channelId,
             message,
             pingEveryone,
